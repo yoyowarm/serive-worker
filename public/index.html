@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="zh-Hant-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="apple-mobile-web-app-status-bar-style" content="blue">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-title" content="MyGram">
+    <title>30 Days through PWAs</title>
+    <link href="https://fonts.googleapis.com/css?family=Roboto:400,700" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="https://code.getmdl.io/1.3.0/material.blue-red.min.css" />
+    <link rel="icon" sizes="48x48" href="favicon.ico">  
+    <link rel="stylesheet" href="./src/css/app.css">
+    <link href="src/images/icons/demo-icon48.png" rel="apple-touch-icon" sizes="48x48" />
+    <link href="src/images/icons/demo-icon72.png" rel="apple-touch-icon" sizes="72x72" />
+    <link href="src/images/icons/demo-icon144.png" rel="apple-touch-icon" sizes="144x144" />
+
+    <link href="src/images/touch/template-1242*2148.jpg"
+          media="(device-width: 414px) and (device-height: 736px)
+                 and (-webkit-device-pixel-ratio: 3)
+                 and (orientation: portrait)"
+          rel="apple-touch-startup-image">
+
+    <!-- iPhone 6 Plus landscape startup image -->
+    <link href="src/images/touch/template-1182*2208.jpg"
+          media="(device-width: 414px) and (device-height: 736px)
+                 and (-webkit-device-pixel-ratio: 3)
+                 and (orientation: landscape)"
+          rel="apple-touch-startup-image">
+
+    <!-- iPhone 6 startup image -->
+    <link href="src/images/touch/template-750*1294.jpg"
+          media="(device-width: 375px) and (device-height: 667px)
+                 and (-webkit-device-pixel-ratio: 2)"
+          rel="apple-touch-startup-image">
+    
+
+    <link rel="manifest" href="manifest.json">
+</head>
+<body>
+    <div id="app">
+        <div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
+            <header class="mdl-layout__header">
+                <div class="mdl-layout__header-row">
+                <!-- Title -->
+                <span class="mdl-layout-title">30 Days through PWAs</span>
+                <!-- Add spacer, to align navigation to the right -->
+                <div class="mdl-layout-spacer"></div>
+                <!-- Navigation. We hide it in small screens. -->
+                <nav class="mdl-navigation mdl-layout--large-screen-only">
+                    <a class="mdl-navigation__link" href="">Link</a>
+                    <a class="mdl-navigation__link" href="">Link</a>
+                </nav>
+                </div>
+            </header>
+            <div class="mdl-layout__drawer">
+                <span class="mdl-layout-title">Title</span>
+                <nav class="mdl-navigation">
+                <a class="mdl-navigation__link" href="">Link</a>
+                <a class="mdl-navigation__link" href="">Link</a>
+                </nav>
+            </div>
+            <main class="mdl-layout__content">
+                <div id="create-post-form">
+                    <form>
+                        <div class="input-section mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                            <input class="mdl-textfield__input" type="text" id="title">
+                            <label class="mdl-textfield__label" for="title" name="title">標題</label>
+                        </div>
+                        <div class="input-section mdl-textfield mdl-js-textfield mdl-textfield--floating-label" id="post-content">
+                            <input class="mdl-textfield__input" type="text" id="content">
+                            <label class="mdl-textfield__label" for="content" name="content">內容</label>
+                        </div>
+                        <br>
+                        <div>
+                            <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-color--accent"
+                                    type="submit" id="post-btn">發佈
+                            </button>
+                        </div>
+                        <br>
+                        <div>
+                            <button class="mdl-button mdl-js-button mdl-button--fab" id="close-modal-btn" type="button">
+                            <i class="material-icons">close</i>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <img src="src/images/demo.jpg" class="main-image" alt="台北">
+                <div class="page-content">內容</div>
+                    <div class="add-button">
+                        <button class="mdl-button mdl-js-button mdl-button--fab mdl-button--colored"
+                                id="add-post-btn">
+                            <i class="material-icons">add</i>
+                        </button>
+                    </div>
+            </main>
+        </div>
+    </div>
+    <script src="./src/js/app.js"></script>    
+    <script src="./src/js/post.js"></script>
+    <script>
+        let btnSave = document.querySelector('#add-post-btn');
+        var deferredPrompt;
+        window.addEventListener('beforeinstallprompt', function(e) {
+        // beforeinstallprompt Event fired
+        // e.userChoice will return a Promise.
+        e.userChoice.then(function(choiceResult) {
+          console.log(choiceResult.outcome);
+          if(choiceResult.outcome == 'dismissed') {
+            console.log('User cancelled home screen install');
+          }
+          else {
+            console.log('User added to home screen');
+          }
+        });
+      });
+      btnSave.addEventListener('click', function() {
+  if(deferredPrompt !== undefined) {
+    deferredPrompt.prompt();
+    
+    deferredPrompt.userChoice.then(function(choiceResult) {
+      console.log(choiceResult.outcome);
+      if(choiceResult.outcome == 'dismissed') {
+        console.log('User cancelled home screen install');
+      }
+      else {
+        console.log('User added to home screen');
+      }
+      deferredPrompt = null;
+    });
+  }
+});
+function openCreatePostModal() {
+  createPostArea.style.display = 'block';
+  if(deferredPrompt){
+      deferredPrompt.prompt();
+      deferredPrompt.userChoice.then(function(choiceResult){
+        console.log(choiceResult.outcome);
+        if(choiceResult.outcome == 'dismissed')
+            console.log('使用者取消安裝');
+        else
+            console.log('使用者安裝');
+      });
+      deferredPrompt = null;
+  }
+}
+const isIos = ()=>{
+    const userAgent = window.navigator.userAgent.toLocaleLowerCase()
+    return /iphone|ipad|ipod/.test( userAgent );
+}
+const isInStandaloneMode = ()=>('standalone' in window.navigator && (window.navigator.standalone))
+if(isIos() && !isInStandaloneMode()){
+    alert('安裝航空 app ,按下按鈕立即安裝成功')
+}
+if ('serviceWorker' in window.navigator) {
+    window.navigator.serviceWorker.register('./service-worker.js')
+    .then((reg)=>{
+        console.log('Registration succeeded. Scope is ' + reg.scope)
+    }).catch((error)=>{
+        console.log('Registration failed with ' + error);
+    })
+// alert('serviceworker')
+}
+  </script>
+    <script defer src="https://code.getmdl.io/1.3.0/material.min.js"></script>
+</body>
+</html>
